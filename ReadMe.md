@@ -2,7 +2,7 @@
 
 ``` powershell
 NAME
-    C:\Projects\HttpDiag\HttpDiag.ps1
+    C:\HttpDiag.ps1
 
 SYNOPSIS
 
