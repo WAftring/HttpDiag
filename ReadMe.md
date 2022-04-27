@@ -8,11 +8,13 @@ SYNOPSIS
 
 
 SYNTAX
-    C:\HttpDiag.ps1 [-Config] [-StartTrace] [-LogDir <String>] [<CommonParameters>]
+    C:\HttpDiag.ps1 [-LogDir <String>] [<CommonParameters>]
 
-    C:\HttpDiag.ps1 [-Config] [-StopTrace] [-LogDir <String>] [<CommonParameters>]
+    C:\HttpDiag.ps1 [-StartTrace] [-LogDir <String>] [<CommonParameters>]
 
-    C:\HttpDiag.ps1 [-Config] [-InteractiveTrace] [-LogDir <String>] [<CommonParameters>]
+    C:\HttpDiag.ps1 [-StopTrace] [-LogDir <String>] [<CommonParameters>]
+
+    C:\HttpDiag.ps1 [-InteractiveTrace] [-LogDir <String>] [<CommonParameters>]
 
 
 DESCRIPTION
