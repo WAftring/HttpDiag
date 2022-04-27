@@ -1,4 +1,7 @@
+#Requires -runasadministrator
 <#
+    .SYNOPSIS
+    Display http.sys relevent data or start http.sys specific ETW tracing. Run with no parameters displays configuration information.
     .DESCRIPTION
     A diagnostic script for the http.sys Windows component
     .PARAMETER StartTrace
@@ -11,7 +14,7 @@
     Output path for any data collection
 #>
 
-[CmdletBinding(DefaultParameterSetName = "General")]
+[CmdletBinding()]
 param(
     [Parameter(ParameterSetName = "Start")]
     [switch]$StartTrace,
