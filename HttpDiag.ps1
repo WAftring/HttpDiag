@@ -7,6 +7,8 @@
     Stops a http.sys ETW tracing session
     .PARAMETER InteractiveTrace
     Starts an interactive http.sys ETW tracing session
+    .PARAMETER LogDir
+    Output path for any data collection
 #>
 
 [CmdletBinding(DefaultParameterSetName = "General")]
@@ -44,6 +46,10 @@ function Get-HttpConfig {
 
     Get-HttpRequestQueues
     Get-HttpReservedUrls
+
+    Write-Host "Registry Information:"
+    Get-Item HKLM:\SYSTEM\CurrentControlSet\Services\HTTP,HKLM:\SYSTEM\CurrentControlSet\Services\HTTP\Parameters\ | Out-String | Write-Host
+
 }
 function Get-HttpRequestQueues {
     Write-Debug "Enter Get-HttpConfig"
@@ -124,7 +130,7 @@ function Invoke-HttpTrace {
     Write-Debug "Enter Invoke-HttpTrace Start: $Start Stop: $Stop"
     $Pktmon = Get-Command pktmon -ErrorAction SilentlyContinue
     if ($Start) {
-        Invoke-Expression -Command "netsh trace start capture=yes scenario=InternetServer_dbg maxsize=4096 persistent=yes report=disable tracefile=$Script:LogPath\HttpTrace.etl"
+        Invoke-Expression -Command "netsh trace start overwrite=yes capture=yes scenario=InternetServer_dbg maxsize=4096 persistent=yes report=disable tracefile=$Script:LogPath\HttpTrace.etl"
         if ($Pktmon -ne $null) {
             Invoke-Expression -Command "pktmon start --capture -f $Script:LogPath\Pktmon.etl -s 4096"
         }
@@ -158,7 +164,7 @@ function Get-HttpTraceData {
         $Params = $EventLog.Split("!")
         $LogName = $Params[0]
         $OutFile = $Params[1]
-        Invoke-Expression -Command "wevtutil epl `"$LogName`" `"$OutFile`""
+        Invoke-Expression -Command "wevtutil epl `"$LogName`" `"$Script:LogPath\$OutFile`" /overwrite:true"
     }
     Write-Debug "Exit Get-HttpTraceData"
 }
@@ -169,7 +175,7 @@ if (-not (Test-Path $Script:LogPath)) {
     New-Item $Script:LogPath -ItemType Directory | Out-Null
 }
 
-if ($StartTrace -or $InteractiveTrace -or $StopTrace) { Start-Transcript -Path "$Script:LogPath\Transcript.log" | Out-Null }
+if ($InteractiveTrace -or $StopTrace) { Start-Transcript -Path "$Script:LogPath\Transcript.log" | Out-Null }
 
 Write-Host "HttpDiag vers: $Script:Version`n"
 
@@ -177,10 +183,10 @@ if ($StartTrace -or $InteractiveTrace) { Invoke-HttpTrace -Start }
 if ($InteractiveTrace) {
     Read-Host -Prompt "Press enter to stop the capture"
 }
-if ($StopTrace) { Invoke-HttpTrace -Stop }
+if ($StopTrace -or $InteractiveTrace) { Invoke-HttpTrace -Stop }
 
-Get-HttpConfig
+if(-not $StartTrace) { Get-HttpConfig }
 
-if ($StartTrace -or $InteractiveTrace -or $Stop) { Stop-Transcript | Out-Null }
+if ($InteractiveTrace -or $Stop) { Stop-Transcript | Out-Null }
 
 #endregion
