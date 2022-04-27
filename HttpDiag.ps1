@@ -9,9 +9,8 @@
     Starts an interactive http.sys ETW tracing session
 #>
 
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName = "General")]
 param(
-    [switch]$Config,
     [Parameter(ParameterSetName = "Start")]
     [switch]$StartTrace,
     [Parameter(ParameterSetName = "Stop")]
@@ -170,7 +169,8 @@ if (-not (Test-Path $Script:LogPath)) {
     New-Item $Script:LogPath -ItemType Directory | Out-Null
 }
 
-Start-Transcript -Path "$Script:LogPath\Transcript.log" | Out-Null
+if ($StartTrace -or $InteractiveTrace -or $StopTrace) { Start-Transcript -Path "$Script:LogPath\Transcript.log" | Out-Null }
+
 Write-Host "HttpDiag vers: $Script:Version`n"
 
 if ($StartTrace -or $InteractiveTrace) { Invoke-HttpTrace -Start }
@@ -178,8 +178,9 @@ if ($InteractiveTrace) {
     Read-Host -Prompt "Press enter to stop the capture"
 }
 if ($StopTrace) { Invoke-HttpTrace -Stop }
-if ($Config -or $InteractiveTrace -or $StopTrace) { Get-HttpConfig }
 
-Stop-Transcript | Out-Null
+Get-HttpConfig
+
+if ($StartTrace -or $InteractiveTrace -or $Stop) { Stop-Transcript | Out-Null }
 
 #endregion
