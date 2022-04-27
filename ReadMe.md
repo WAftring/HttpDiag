@@ -1,5 +1,6 @@
 # HttpDiag.ps1
 
+``` powershell
 NAME
     C:\Projects\HttpDiag\HttpDiag.ps1
 
@@ -24,3 +25,4 @@ REMARKS
     To see the examples, type: "Get-Help C:\HttpDiag.ps1 -Examples"
     For more information, type: "Get-Help C:\HttpDiag.ps1 -Detailed"
     For technical information, type: "Get-Help C:\HttpDiag.ps1 -Full"
+```
